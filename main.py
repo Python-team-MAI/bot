@@ -11,7 +11,7 @@ from bot.middlewares import register_middlewares
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp.web import AppRunner, TCPSite, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-
+import aiohttp_cors
 
 @session_manager.connection(commit=True)
 
@@ -98,6 +98,17 @@ async def setup_webhook() -> None:
     )
     webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
     app.router.add_post(f"{settings.WEBHOOK_PATH}/auth", handle_auth)
+
+    cors = aiohttp_cors.setup(app, defaults={
+        "https://mai-students.ru": aiohttp_cors.ResourceOptions(
+            allow_credentials=True,
+            expose_headers="*",
+            allow_headers="*",
+        )
+    })
+    for route in list(app.router.routes()):
+        cors.add(route)
+
     setup_application(app, dp, bot=bot)
 
     runner = AppRunner(app)

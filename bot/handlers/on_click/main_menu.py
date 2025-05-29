@@ -41,7 +41,7 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
         if answer == "invalid token error. Not enough segments":
             access_token, refresh_token = await users_repo.refresh_token(user.refresh_token)
 
-        await users_repo.update(session=session, filters=UserFilter(id=user.id), values=UserFilter(access_token=access_token, refresh_token=refresh_token))
+            await users_repo.update(session=session, filters=UserFilter(id=user.id), values=UserFilter(access_token=access_token, refresh_token=refresh_token))
         headers = {
             "Authorization": f"Bearer {access_token}",
             # Content-Type установится автоматически как multipart/form-data
