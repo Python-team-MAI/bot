@@ -27,7 +27,7 @@ async def process_question(message: Message, state: FSMContext, question_text: s
             session=session,
             values=Message(user_id=user.id, text=question_text, type="user")
         )
-        access_token = await users_repo.get_access_token(tg_id=message.from_user.id, session=session)
+        access_token = await users_repo.get_access_token(tg_id=str(message.from_user.id), session=session)
         headers = {
             "Authorization": f"Bearer {access_token}",
             # Content-Type установится автоматически как multipart/form-data
