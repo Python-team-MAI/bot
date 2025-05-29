@@ -1,0 +1,51 @@
+services:
+
+  bot:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - '8080:8080'
+    depends_on:
+      bot_redis:
+        condition: service_healthy
+    networks:
+        - bot_main
+  bot_redis:
+    image: redis:latest
+    ports:
+      - "6382:6379"
+    volumes:
+      - ./redisdata:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - bot_main
+
+  bot_postgres:
+    image: postgres:13-alpine
+    env_file:
+        - .env
+    healthcheck:
+        test: ['CMD-SHELL', 'pg_isready -U postgres']
+        interval: 5s
+        timeout: 5s
+        retries: 5
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
+    networks:
+        - bot_main
+      
+volumes:
+  redisdata:
+  postgres_data:
+
+
+networks:
+  main:
+    driver: bridge
