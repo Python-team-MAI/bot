@@ -17,6 +17,8 @@ class UserOrm(Base):
 
 class User(BaseModel):
     tg_id: str
+    access_token: str 
+    refresh_token: str
 
 class UserView(User):
     model_config = ConfigDict(from_attributes=True)
@@ -33,18 +35,17 @@ class UserFilter(BaseModel):
     refresh_token: str | None = None
 
 
-
 class UsersRepo(BaseRepository):
     model = UserOrm
 
     __tablename__ = "users"
 
     async def save_tokens(self, tg_id, access_token, refresh_token, session):
-        user = await self.find_one_or_none(session=session, filters=UserFilter(tg_id=tg_id))
-        if not user:
-            user = await self.add(session=session, values=User(tg_id=tg_id))
+        if not await self.update(session=session, filters=UserFilter(tg_id=tg_id), values=UserFilter(access_token=access_token, refresh_token=refresh_token)):
+            user = await self.find_one_or_none(session=session, filters=UserFilter(tg_id=tg_id))
+            await self.add(session=session, values=User(tg_id=tg_id, access_token=access_token, refresh_token=refresh_token))
         await set_redis_value(key=f"tg_id:{tg_id}", value=access_token)
-        await self.update(session=session, filters=UserFilter(id=user.id), values=UserFilter(access_token=access_token, refresh_token=refresh_token))
+        
         logger.debug("Save tokens")
 
     async def get_access_token(self, tg_id, session):
