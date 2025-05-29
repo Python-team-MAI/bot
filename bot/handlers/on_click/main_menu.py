@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 async def process_question(message: Message, state: FSMContext, question_text: str, session: AsyncSession):
     """Общая функция обработки вопроса независимо от источника текста"""
     try:
-        user = await users_repo.find_one_or_none(session=session, filters=UserFilter(tg_id=message.from_user.id))
+        user = await users_repo.find_one_or_none(session=session, filters=UserFilter(tg_id=str(message.from_user.id)))
         question = await messages_repo.add(
             session=session,
             values=Message(user_id=user.id, text=question_text, type="user")
