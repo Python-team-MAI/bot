@@ -35,7 +35,7 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
         wait_message = await message.answer("Генерируем ответ....")
         async with aiohttp.ClientSession() as session:
             async with session.post(settings.ML_SERVER_URL, headers=headers, data={
-                "message": question_text
+                "message": message.text
                         }) as response:
                 answer = await response.text()
 
