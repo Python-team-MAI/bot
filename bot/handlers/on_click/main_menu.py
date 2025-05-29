@@ -32,13 +32,14 @@ async def process_question(message: Message, state: FSMContext, question_text: s
             "Authorization": f"Bearer {access_token}",
             # Content-Type установится автоматически как multipart/form-data
         }
+        wait_message = await message.answer("Генерируем ответ....")
         async with aiohttp.ClientSession() as session:
             async with session.post(settings.ML_SERVER_URL, headers=headers, data={
                 "message": question_text
                         }) as response:
                 answer = await response.text()
 
-        logger.info(f"answer: {answer}")
+        await wait_message.delete()
         if answer:
             await message.reply(
                 answer,
@@ -46,6 +47,10 @@ async def process_question(message: Message, state: FSMContext, question_text: s
                     ReactionTypeEmoji(emoji="👍"),
                     ReactionTypeEmoji(emoji="👎")
                 ]
+            )
+            await messages_repo.add(
+                session=session,
+                values=Message(user_id=message.from_user.id, text=answer, type="assistant")
             )
         else:
             await message.answer("Произошла ошибка при получении ответа. Попробуйте позже.")
