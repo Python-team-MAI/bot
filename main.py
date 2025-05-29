@@ -9,7 +9,7 @@ from bot.handlers import get_handlers_router
 from bot.keyboards.default_commands import remove_default_commands
 from bot.middlewares import register_middlewares
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
-from aiohttp.web import AppRunner, TCPSite, Request, Response
+from aiohttp.web import AppRunner, TCPSite, Request, Response, Application, run_app
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -85,24 +85,41 @@ async def on_shutdown() -> None:
 
 async def setup_webhook() -> None:
 
-    await bot.set_webhook(
-        settings.webhook_url,
-        allowed_updates=dp.resolve_used_update_types(),
-    )
+    # await bot.set_webhook(
+    #     settings.webhook_url,
+    #     allowed_updates=dp.resolve_used_update_types(),
+    #     secret_token=settings.WEBHOOK_SECRET
+    # )
 
+    # webhook_requests_handler = SimpleRequestHandler(
+    #     dispatcher=dp,
+    #     bot=bot,
+    #     secret_token=settings.WEBHOOK_SECRET
+    # )
+    # webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
+    # setup_application(app, dp, bot=bot)
+
+    # runner = AppRunner(app)
+    # await runner.setup()
+    # site = TCPSite(runner, host=settings.WEBHOOK_HOST, port=settings.WEBHOOK_PORT)
+    # await site.start()
+    # logger.debug("Setup webhook succesfully")
+    # await asyncio.Event().wait()
+    app = Application()
+
+    # Настраиваем обработчик запросов для работы с вебхуком
     webhook_requests_handler = SimpleRequestHandler(
-        dispatcher=dp,
-        bot=bot,
+        dispatcher=dp,  # Передаем диспетчер
+        bot=bot  # Передаем объект бота
     )
+    # Регистрируем обработчик запросов на определенном пути
     webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
+
+    # Настраиваем приложение и связываем его с диспетчером и ботом
     setup_application(app, dp, bot=bot)
 
-    runner = AppRunner(app)
-    await runner.setup()
-    site = TCPSite(runner, host=settings.WEBHOOK_HOST, port=settings.WEBHOOK_PORT)
-    await site.start()
-    logger.debug("Setup webhook succesfully")
-    await asyncio.Event().wait()
+    # Запускаем веб-сервер на указанном хосте и порте
+    run_app(app, host=settings.WEBHOOK_HOST, port=settings.WEBHOOK_PORT)
 
 
 async def main() -> None:

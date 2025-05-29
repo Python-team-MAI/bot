@@ -35,6 +35,7 @@ class AuthMiddleware(BaseMiddleware):
             if not from_user:
                 return await handler(event, data)
 
+            logger.debug(f"Telegram id: {from_user.id}")
             user = await users_repo.find_one_or_none(
                 session=session,
                 filters=UserFilter(tg_id=str(from_user.id))
