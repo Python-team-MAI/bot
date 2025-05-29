@@ -119,7 +119,7 @@ async def setup_webhook() -> None:
     setup_application(app, dp, bot=bot)
 
     # Запускаем веб-сервер на указанном хосте и порте
-    run_app(app, host=settings.WEBHOOK_HOST, port=settings.WEBHOOK_PORT)
+    await run_app(app, host=settings.WEBHOOK_HOST, port=settings.WEBHOOK_PORT)
 
 
 async def main() -> None:
