@@ -31,13 +31,13 @@ async def handle_auth(request: Request, session: AsyncSession):
 
     # Уведомляем пользователя
     await bot.send_message(tg_id, "✅ Успешный вход в систему!")
-    hello_text = ""
-    if first_name:
-        hello_text = hello_text + first_name + " "
+    hello_text = "Здравствуйте"
+    if first_name != "None":
+        hello_text = hello_text + ", " + first_name + " "
 
-        if last_name:
+        if last_name != "None":
             hello_text += last_name
-        await bot.send_message(tg_id, f"Здравствуйте, {hello_text}")
+    await bot.send_message(tg_id, hello_text)
     return Response(status=200, text="OK")
 
 logger = setup_logging()
