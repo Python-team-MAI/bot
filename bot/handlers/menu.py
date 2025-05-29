@@ -18,7 +18,7 @@ router = Router(name="menu")
 async def handle_question_message(message: types.Message, state: FSMContext, session: AsyncSession):
     """Обработчик обычных текстовых сообщений в состоянии start_question"""
     await state.set_state(MainMenu.waiting_answer)
-    await process_question(message, state, message.text, session)
+    await process_question(message, state, session)
 
 
 
