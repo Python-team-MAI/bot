@@ -6,6 +6,7 @@ from aiogram_dialog.widgets.input import TextInput, ManagedTextInput
 from bot.dialogs.main_menu.states import MainMenu
 from bot.core.config import settings
 from bot.service.messages import messages_repo, Message
+from bot.service.users import users_repo
 import logging
 from bot.cache.redis import redis_client, set_redis_value
 from bot.core.loader import bot
@@ -13,6 +14,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.context import FSMContext
 from bot.keyboards.inline_menu import main_menu_kb
 from sqlalchemy.ext.asyncio import AsyncSession
+import aiohttp
+from aiohttp.web import Request
 logger = logging.getLogger(__name__)
 
 
@@ -24,19 +27,28 @@ async def process_question(message: Message, state: FSMContext, question_text: s
             session=session,
             values=Message(user_id=message.from_user.id, text=" ".join(question_text.lower().split(" ")), type="user")
         )
+        access_token = await users_repo.get_access_token(tg_id=message.from_user.id, session=session)
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            # Content-Type установится автоматически как multipart/form-data
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(settings.ML_SERVER_URL, headers=headers, data={
+                "message": question_text
+                        }) as response:
+                answer = await response.text()
 
-        # answer = await ml_service.get_answer(question_text, thread.thread_id if thread else None) 
-        # logger.info(f"answer: {answer}")
-        # if answer:
-        #     await message.reply(
-        #         answer,
-        #         allowed_reactions=[
-        #             ReactionTypeEmoji(emoji="👍"),
-        #             ReactionTypeEmoji(emoji="👎")
-        #         ]
-        #     )
-        # else:
-        #     await message.answer("Произошла ошибка при получении ответа. Попробуйте позже.")
+        logger.info(f"answer: {answer}")
+        if answer:
+            await message.reply(
+                answer,
+                allowed_reactions=[
+                    ReactionTypeEmoji(emoji="👍"),
+                    ReactionTypeEmoji(emoji="👎")
+                ]
+            )
+        else:
+            await message.answer("Произошла ошибка при получении ответа. Попробуйте позже.")
             
 
         

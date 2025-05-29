@@ -13,28 +13,12 @@ logger = logging.getLogger(__name__)
 router = Router(name="menu")
 
 
-@router.message(Command("menu"))
-async def start_handler(message: types.Message, state: FSMContext) -> None:
-    if message.reply_markup:
-        await message.edit_reply_markup(reply_markup=None)
-    await message.answer(
-        "Главное меню",
-        reply_markup=main_menu_kb()
-    )
 
-
-@router.message()
+@router.message(F.text.not_.startswith("/"))
 async def handle_question_message(message: types.Message, state: FSMContext, session: AsyncSession):
     """Обработчик обычных текстовых сообщений в состоянии start_question"""
     await state.set_state(MainMenu.waiting_answer)
     await process_question(message, state, message.text, session)
-
-
-# @router.message(F.text.not_.startswith("/"))
-# async def handle_question_message(message: types.Message, state: FSMContext, session: AsyncSession):
-#     """Обработчик обычных текстовых сообщений в состоянии start_question"""
-#     await state.set_state(MainMenu.waiting_answer)
-#     await process_question(message, state, message.text, session)
 
 
 
