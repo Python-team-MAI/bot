@@ -29,7 +29,6 @@ async def handle_auth(request: Request, session: AsyncSession):
     # Сохраняем токены в БД/Redis
     await users_repo.save_tokens(tg_id, access_token, refresh_token, session=session)
 
-
     # Уведомляем пользователя
     await bot.send_message(tg_id, "✅ Успешный вход в систему!")
     hello_text = ""
