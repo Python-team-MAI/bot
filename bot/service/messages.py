@@ -10,14 +10,14 @@ class MessageOrm(Base):
 
     __tablename__ = "messages"
     text: Mapped[str] = mapped_column(nullable=False)
-    user_id: Mapped[str] = mapped_column(nullable=False)
+    user_id: Mapped[int] = mapped_column(nullable=False)
     rating: Mapped[int] = mapped_column(default=0)  # -1 or 0 or 1
     type: Mapped[str] = mapped_column(nullable=False) 
     
 
 class Message(BaseModel):
     text: str
-    user_id: str
+    user_id: int
     rating: int = 0 
     type: str
 
