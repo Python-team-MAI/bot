@@ -14,7 +14,7 @@ router = Router(name="menu")
 
 
 
-@router.message(F.text.not_.startswith("/"))
+@router.message()
 async def handle_question_message(message: types.Message, state: FSMContext, session: AsyncSession):
     """Обработчик обычных текстовых сообщений в состоянии start_question"""
     await state.set_state(MainMenu.waiting_answer)

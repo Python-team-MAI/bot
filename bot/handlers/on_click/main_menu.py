@@ -25,7 +25,7 @@ async def process_question(message: Message, state: FSMContext, question_text: s
         
         question = await messages_repo.add(
             session=session,
-            values=Message(user_id=message.from_user.id, text=" ".join(question_text.lower().split(" ")), type="user")
+            values=Message(user_id=message.from_user.id, text=question_text, type="user")
         )
         access_token = await users_repo.get_access_token(tg_id=message.from_user.id, session=session)
         headers = {

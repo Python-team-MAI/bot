@@ -12,7 +12,7 @@ def get_handlers_router() -> Router:
 
     router = Router()
     router.include_router(start.router)
-    router.include_router(menu.router)
     router.include_router(support.router)
     router.include_router(reactions.router)
+    router.include_router(menu.router)
     return router
