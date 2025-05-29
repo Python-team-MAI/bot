@@ -12,6 +12,9 @@ rebuild:
 	docker compose build
 	docker compose up -d
 
+logbot:
+	docker compose logs bot
+
 
 dropdb:
 	docker compose exec bot_postgres psql -U postgres -c "DROP DATABASE IF EXISTS telegram_mai_students;"
@@ -26,11 +29,11 @@ fullmigrate: makemigration migrate
 
 # Выполнить миграции
 migrate:
-	docker compose run --rm app alembic upgrade head
+	docker compose run --rm bot alembic upgrade head
 
 # Создать миграцию
 makemigration:
-	docker compose run --rm app alembic revision --autogenerate -m "$(name)"
+	docker compose run --rm bot alembic revision --autogenerate -m "$(name)"
 
 
 # Очистить volume'ы и образы

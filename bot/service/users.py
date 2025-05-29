@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from bot.core.base.base_repository import BaseRepository
 from bot.utils.setup_logging import setup_logging
+from bot.cache.redis import set_redis_value, redis_client
 
 logger = setup_logging(__name__)
 
@@ -28,14 +29,28 @@ class UserFilter(BaseModel):
     created_at: datetime | None = None
     updated_at: datetime | None = None
     tg_id: str | None = None
+    access_token: str | None = None
+    refresh_token: str | None = None
 
 
 
 class UsersRepo(BaseRepository):
     model = UserOrm
 
+    __tablename__ = "users"
+
     async def save_tokens(self, tg_id, access_token, refresh_token, session):
+        await set_redis_value(key=f"tg_id:{tg_id}", value=access_token)
+        await self.update(session=session, filters=UserFilter(tg_id=tg_id), values=UserFilter(access_token=access_token, refresh_token=refresh_token))
         logger.debug("Save tokens")
-        pass
+
+    async def get_access_token(self, tg_id, session):
+        token = await redis_client.get(name=f"tg_id:{tg_id}")
+        if not token:
+            user = await users_repo.find_one_or_none(session=session, filters=UserFilter(tg_id=tg_id))
+            token = user.access_token
+            await set_redis_value(key=f"tg_id:{tg_id}", value=token)
+        return token
+        
 
 users_repo: UsersRepo = UsersRepo()

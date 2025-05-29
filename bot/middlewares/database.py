@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 
 from aiogram import BaseMiddleware
 
-from api.core.session_manager import session_manager
+from bot.core.session_manager import session_manager
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
@@ -18,6 +18,6 @@ class DatabaseMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: dict[str, Any],
     ) -> Any:
-        async with session_manager.get_db_with_transaction() as session:
+        async with session_manager.get_session() as session:
             data["session"] = session
             return await handler(event, data)

@@ -7,6 +7,8 @@ from bot.core.base.base_service import BaseService
 
 
 class MessageOrm(Base):
+
+    __tablename__ = "messages"
     text: Mapped[str] = mapped_column(nullable=False)
     user_id: Mapped[str] = mapped_column(nullable=False)
     rating: Mapped[int] = mapped_column(default=0)  # -1 or 0 or 1

@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 import time
-from api.cache.redis import redis_client
+from bot.cache.redis import redis_client
 
 RATE_LIMIT_SECONDS = 5
 

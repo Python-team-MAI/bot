@@ -47,7 +47,7 @@ admins_commands: dict[str, dict[str, str]] = {
 }
 
 
-async def set_default_commands(bot: Bot) -> None:
+async def fset_default_commands(bot: Bot) -> None:
     await remove_default_commands(bot)
 
     for language_code, commands in users_commands.items():

@@ -37,7 +37,7 @@ class AuthMiddleware(BaseMiddleware):
 
             user = await users_repo.find_one_or_none(
                 session=session,
-                filters=UserFilter(tg_id=from_user.id)
+                filters=UserFilter(tg_id=str(from_user.id))
             )
             if user:
                 return await handler(event, data)

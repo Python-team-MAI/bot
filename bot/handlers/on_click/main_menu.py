@@ -25,18 +25,18 @@ async def process_question(message: Message, state: FSMContext, question_text: s
             values=Message(user_id=message.from_user.id, text=" ".join(question_text.lower().split(" ")), type="user")
         )
 
-        answer = await ml_service.get_answer(question_text, thread.thread_id if thread else None) 
-        logger.info(f"answer: {answer}")
-        if answer:
-            await message.reply(
-                answer,
-                allowed_reactions=[
-                    ReactionTypeEmoji(emoji="👍"),
-                    ReactionTypeEmoji(emoji="👎")
-                ]
-            )
-        else:
-            await message.answer("Произошла ошибка при получении ответа. Попробуйте позже.")
+        # answer = await ml_service.get_answer(question_text, thread.thread_id if thread else None) 
+        # logger.info(f"answer: {answer}")
+        # if answer:
+        #     await message.reply(
+        #         answer,
+        #         allowed_reactions=[
+        #             ReactionTypeEmoji(emoji="👍"),
+        #             ReactionTypeEmoji(emoji="👎")
+        #         ]
+        #     )
+        # else:
+        #     await message.answer("Произошла ошибка при получении ответа. Попробуйте позже.")
             
 
         
@@ -49,19 +49,19 @@ async def process_question(message: Message, state: FSMContext, question_text: s
 async def on_reaction_added(message: Message, reaction: str):
     """Обработка добавления реакции"""
     is_helpful = reaction == "👍"
-    await users_service.update_reaction_stats(
-        user_id=message.from_user.id,
-        is_helpful=is_helpful
-    )
+    # await users_service.update_reaction_stats(
+    #     user_id=message.from_user.id,
+    #     is_helpful=is_helpful
+    # )
 
 async def on_reaction_removed(message: Message, reaction: str):
     """Обработка удаления реакции"""
     is_helpful = reaction == "👍"
-    await users_service.update_reaction_stats(
-        user_id=message.from_user.id,
-        is_helpful=not is_helpful, 
-        remove=True  
-    )
+    # await users_service.update_reaction_stats(
+    #     user_id=message.from_user.id,
+    #     is_helpful=not is_helpful, 
+    #     remove=True  
+    # )
 
 
 async def on_support(user_id: int, message: Message):

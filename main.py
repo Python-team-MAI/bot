@@ -6,7 +6,7 @@ from bot.core.config import settings
 from bot.core.session_manager import session_manager
 from bot.core.loader import app, bot, dp
 from bot.handlers import get_handlers_router
-from bot.keyboards.default_commands import remove_default_commands, set_default_commands
+from bot.keyboards.default_commands import remove_default_commands
 from bot.middlewares import register_middlewares
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp.web import AppRunner, TCPSite, Request, Response
@@ -14,11 +14,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 @session_manager.connection(commit=True)
+
 async def handle_auth(request: Request, session: AsyncSession):
     data = await request.post()
     tg_id = data.get("telegram_id")
     access_token = data.get("access_token")
     refresh_token = data.get("refresh_token")
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
     if not all([tg_id, access_token, refresh_token]):
         return Response(status=400, text="Missing fields")
     
@@ -28,7 +31,13 @@ async def handle_auth(request: Request, session: AsyncSession):
 
     # Уведомляем пользователя
     await bot.send_message(tg_id, "✅ Успешный вход в систему!")
+    hello_text = ""
+    if first_name:
+        hello_text = hello_text + first_name + " "
 
+        if last_name:
+            hello_text += last_name
+        await bot.send_message(tg_id, f"Здравствуйте, {hello_text}")
     return Response(status=200, text="OK")
 
 logger = setup_logging()
@@ -39,8 +48,6 @@ async def on_startup() -> None:
 
     register_middlewares(dp)
     logger.info("register_middlewares")
-    await set_default_commands(bot)
-    logger.info("set_default_commands")
     dp.include_router(get_handlers_router())
     logger.info("include_router")
     bot_info = await bot.get_me()
@@ -109,13 +116,7 @@ async def main() -> None:
         await bot.delete_webhook()
         await setup_webhook()
     else:
-        asyncio.create_task(
-                dp.start_polling(
-                    bot,
-                    allowed_updates=dp.resolve_used_update_types(),
-                    
-                )
-            )
+        await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
 
 async def stop_polling():
@@ -137,3 +138,5 @@ async def stop_polling():
     logger.info("Бот остановлен")
 
 
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -14,7 +14,7 @@ BOT_DIR = Path(__file__).absolute().parent.parent
 
 class EnvBaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="bot/.env",
+        env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
         env_nested_delimiter=","       #
@@ -56,8 +56,6 @@ class WebhookSettings(EnvBaseSettings):
 
 class BotSettings(EnvBaseSettings):
     BOT_TOKEN: str
-    YANDEX_API_KEY: str
-    YANDEX_FOLDER_ID: str
     ML_SERVER_URL: str
     MAIN_SERVER_API_DOMAIN: str
     ADMIN_IDS: str

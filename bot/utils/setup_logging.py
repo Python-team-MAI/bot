@@ -7,7 +7,6 @@ from pathlib import Path
 
 
 def setup_logging(
-    name,
     default_path="logging_config.yaml", default_level=logging.DEBUG, env_key="LOG_CFG"
 ) -> Logger:
     """Настройка логирования из YAML файла"""
