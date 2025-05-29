@@ -97,7 +97,7 @@ async def setup_webhook() -> None:
         secret_token=settings.WEBHOOK_SECRET
     )
     webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
-    app.router.add_post(f"{settings.WEBHOOK_PATH}/auth", handle_auth)
+    app.router.add_post(f"/auth", handle_auth)
     setup_application(app, dp, bot=bot)
 
     runner = AppRunner(app)
