@@ -88,13 +88,11 @@ async def setup_webhook() -> None:
     await bot.set_webhook(
         settings.webhook_url,
         allowed_updates=dp.resolve_used_update_types(),
-        secret_token=settings.WEBHOOK_SECRET,
     )
 
     webhook_requests_handler = SimpleRequestHandler(
         dispatcher=dp,
         bot=bot,
-        secret_token=settings.WEBHOOK_SECRET,
     )
     webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
