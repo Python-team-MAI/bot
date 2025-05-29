@@ -33,13 +33,14 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
             # Content-Type установится автоматически как multipart/form-data
         }
         wait_message = await message.answer("Генерируем ответ....")
-        async with aiohttp.ClientSession() as session:
-            async with session.post(settings.ML_SERVER_URL, headers=headers, data={
+        async with aiohttp.ClientSession() as client_session:
+            async with client_session.post(settings.ML_SERVER_URL, headers=headers, data={
                 "message": message.text
                         }) as response:
                 answer = await response.text()
 
         await wait_message.delete()
+        logger.debug(f"Ans: {answer}")
         if answer:
             await message.reply(
                 answer,

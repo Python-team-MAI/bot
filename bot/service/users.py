@@ -53,7 +53,7 @@ class UsersRepo(BaseRepository):
             token = await redis_client.get(name=f"tg_id:{tg_id}")
             logger.debug(f"Token: {token}")
             if not token:
-                user = await users_repo.find_one_or_none(session=session, filters=UserFilter(tg_id=tg_id))
+                user = await self.find_one_or_none(session=session, filters=UserFilter(tg_id=tg_id))
                 token = user.access_token
                 logger.debug(f"Token: {token}")
                 await set_redis_value(key=f"tg_id:{tg_id}", value=token)
