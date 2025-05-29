@@ -38,6 +38,20 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
                 "message": message.text
                         }) as response:
                 answer = await response.text()
+        if answer == "invalid token error. Not enough segments":
+            access_token, refresh_token = await users_repo.refresh_token(user.refresh_token)
+
+        await users_repo.update(session=session, filters=UserFilter(id=user.id), values=UserFilter(access_token=access_token, refresh_token=refresh_token))
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            # Content-Type установится автоматически как multipart/form-data
+        }
+        wait_message = await message.answer("Генерируем ответ....")
+        async with aiohttp.ClientSession() as client_session:
+            async with client_session.post(settings.ML_SERVER_URL, headers=headers, data={
+                "message": message.text
+                        }) as response:
+                answer = await response.text()
 
         await wait_message.delete()
         logger.debug(f"Ans: {answer}")

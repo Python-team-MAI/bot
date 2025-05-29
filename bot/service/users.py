@@ -5,6 +5,8 @@ from datetime import datetime
 from bot.core.base.base_repository import BaseRepository
 from bot.utils.setup_logging import setup_logging
 from bot.cache.redis import set_redis_value, redis_client
+import aiohttp
+from bot.core.config import settings
 
 logger = setup_logging(__name__)
 
@@ -47,6 +49,15 @@ class UsersRepo(BaseRepository):
         await set_redis_value(key=f"tg_id:{tg_id}", value=access_token)
         
         logger.debug("Save tokens")
+
+    async def refresh_token(refresh_token):
+        headers  = {f"Authorization: Bearer {refresh_token}"}
+        async with aiohttp.ClientSession() as client_session:
+            async with client_session.post(f"{settings.MAIN_SERVER_API_DOMAIN}/v1/auth/refresh", headers=headers) as response:
+                answer = await response.json()
+
+        logger.debug(f"Result refresh: {answer}")
+        return answer.access_token, answer.refresh_token
 
     async def get_access_token(self, tg_id, session):
         try:
