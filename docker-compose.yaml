@@ -8,6 +8,8 @@ services:
     depends_on:
       bot_redis:
         condition: service_healthy
+    volumes:
+      - .:/bot
     networks:
         - bot_main
   bot_redis:
