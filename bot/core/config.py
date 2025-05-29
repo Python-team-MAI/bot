@@ -58,6 +58,7 @@ class BotSettings(EnvBaseSettings):
     BOT_TOKEN: str
     ML_SERVER_URL: str
     MAIN_SERVER_API_DOMAIN: str
+    MAIN_SERVER_DOMAIN: str
     ADMIN_IDS: str
 
 

@@ -46,7 +46,7 @@ class AuthMiddleware(BaseMiddleware):
             logger.info(f"Registering new user | user_id: {from_user.id} | message: {message.text}")
 
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="🔐 Войти", url=f"{settings.MAIN_SERVER_API_DOMAIN}/v1/auth/tg-auth?tg_id={message.from_user.id}")]
+                [InlineKeyboardButton(text="🔐 Войти", url=f"{settings.MAIN_SERVER_DOMAIN}/ru/auth/tg-auth?tg_id={message.from_user.id}")]
             ])
             await message.answer("Чтобы авторизоваться, нажми кнопку ниже:", reply_markup=keyboard)
 
