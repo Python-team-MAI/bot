@@ -51,7 +51,7 @@ class UsersRepo(BaseRepository):
         logger.debug("Save tokens")
 
     async def refresh_token(refresh_token):
-        headers  = {f"Authorization": "Bearer {refresh_token}"}
+        headers  = {f"Authorization": f"Bearer {refresh_token}"}
         async with aiohttp.ClientSession() as client_session:
             async with client_session.post(f"{settings.MAIN_SERVER_API_DOMAIN}/v1/auth/refresh", headers=headers) as response:
                 answer = await response.json()
