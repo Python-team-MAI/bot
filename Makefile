@@ -33,7 +33,7 @@ migrate:
 
 # Создать миграцию
 makemigration:
-	docker compose run --rm bot alembic revision --autogenerate -m "$(name)"
+	docker compose run --rm bot alembic revision --autogenerate
 
 
 # Очистить volume'ы и образы
