@@ -121,7 +121,6 @@ async def setup_webhook() -> None:
 
 
 async def main() -> None:
-
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 
