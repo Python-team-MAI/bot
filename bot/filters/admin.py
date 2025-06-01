@@ -14,5 +14,3 @@ from bot.service.users import users_repo
 #         user_id = message.from_user.id
 
 #         return await users_service.is_admin(session=session, user_id=user_id)
-
-
