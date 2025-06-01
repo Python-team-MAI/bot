@@ -16,7 +16,7 @@ import aiohttp_cors
 @session_manager.connection(commit=True)
 
 async def handle_auth(request: Request, session: AsyncSession):
-    data = await request.post()
+    data = await request.json()
     tg_id = data.get("telegram_id")
     access_token = data.get("access_token")
     refresh_token = data.get("refresh_token")
@@ -100,10 +100,11 @@ async def setup_webhook() -> None:
     app.router.add_post(f"{settings.WEBHOOK_PATH}/auth", handle_auth)
 
     cors = aiohttp_cors.setup(app, defaults={
-        "https://mai-students.ru": aiohttp_cors.ResourceOptions(
+        "*": aiohttp_cors.ResourceOptions(
             allow_credentials=True,
             expose_headers="*",
             allow_headers="*",
+            allow_methods=["POST", "GET", "OPTIONS"],
         )
     })
     for route in list(app.router.routes()):
