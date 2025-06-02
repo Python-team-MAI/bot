@@ -54,7 +54,6 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
                     answer = await response.json()
 
         await wait_message.delete()
-        logger.debug(f"Ans: {answer}, type: {type(answer)}")
         if answer:
             await message.reply(
                 answer["ans"],
@@ -65,7 +64,7 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
             )
             await messages_repo.add(
                 session=session,
-                values=Message(user_id=message.from_user.id, text=answer, type="assistant")
+                values=Message(user_id=message.from_user.id, text=answer['ans'], type="assistant")
             )
         else:
             await message.answer("Произошла ошибка при получении ответа. Попробуйте позже.")
