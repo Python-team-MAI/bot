@@ -51,7 +51,7 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
                 async with client_session.post(settings.ML_SERVER_URL, headers=headers, json={
                     "message": message.text
                             }) as response:
-                    answer = await response.text()
+                    answer = await response.json()
 
         await wait_message.delete()
         logger.debug(f"Ans: {answer}")
