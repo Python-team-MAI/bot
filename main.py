@@ -14,9 +14,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import aiohttp_cors
 
 @session_manager.connection(commit=True)
-
 async def handle_auth(request: Request, session: AsyncSession):
-    data = await request.json()
+    data = await request.post()
     tg_id = data.get("telegram_id")
     access_token = data.get("access_token")
     refresh_token = data.get("refresh_token")
