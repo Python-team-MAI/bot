@@ -57,7 +57,7 @@ async def process_question(message: Message, state: FSMContext, session: AsyncSe
         logger.debug(f"Ans: {answer}")
         if answer:
             await message.reply(
-                answer,
+                answer["ans"],
                 allowed_reactions=[
                     ReactionTypeEmoji(emoji="👍"),
                     ReactionTypeEmoji(emoji="👎")
